@@ -1,5 +1,29 @@
-# Vue 3 + Vite
+# expense-tracker-go 
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+> Just for training purposes. 
 
-Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://vuejs.org/guide/scaling-up/tooling.html#ide-support).
+* Uses formkit,vuetify, axios as the main stack of libraries. 
+
+> These repos cloned and run are required : 
+
+1. expense-tracker-go (will add link soon)
+
+2. expense-tracker-postgre (will add when i will finish project)
+
+## To run locally
+
+1.Clone:
+```bash
+git clone https://github.com/olegsbacula/expense-tracker-vue.git
+```
+
+
+2. Install: 
+```bash
+npm install
+```
+
+3. Run a development environment:
+```bash
+npm run dev
+```
