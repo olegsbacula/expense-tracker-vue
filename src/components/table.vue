@@ -1,12 +1,61 @@
+
+<script setup>
+  import { getAllValues } from '../composables/getAll.js';
+  import { onMounted, ref, shallowRef, computed } from 'vue';
+  import { patchAnExpense } from '../composables/postForTable.js';
+  import { DeleteExpense } from '../composables/delete.js'
+
+  const formTableValues = ref({
+  id:'',
+  expenses: '',
+  description: '',
+  type: '',
+})
+
+  const dialog = shallowRef(false)
+  const isEditing = computed(() => !!formTableValues.value.id)
+
+  const expenses=ref([])
+
+    const headers = [
+    { title: 'ID', key: 'id', align: 'start' },
+    { title: 'Amount', key: 'expenses', align: 'start' },
+    { title: 'Description', key: 'description' },
+    { title: 'Type', key: 'type' },
+    { title: 'Actions', key: 'actions', align: 'end', sortable: false },
+  ]
+
+  onMounted(async () => {
+        try{
+    const response  = await getAllValues()
+    expenses.value = response
+    }
+    catch (err){
+        console.error(err)
+  }
+  })
+
+  function edit(id){
+    const item = expenses.value.find(e => e.id ===id )
+    if (item){
+            formTableValues.value = {... item,
+            expenses: Number(item.expenses)
+        }
+        dialog.value=true
+    }
+  }
+</script>
+
 <template>
+    <div class="table">
     <v-data-table
       hide-default-footer
       :items="expenses"
+      color="black"
       :headers="headers"
-      :style="{ border: '1px solid rgb(200, 200, 200)' }"
     >
       <template v-slot:top>
-        <v-toolbar flat>
+        <v-toolbar border="false" flat>
           <v-toolbar-title>
             <v-icon
               color="medium-emphasis"
@@ -57,12 +106,12 @@
           rounded="lg"
           text="Reset data"
           variant="text"
-          border
+          
           @click="reset"
         ></v-btn>
       </template>
     </v-data-table>
-
+</div>
   <v-dialog v-model="dialog" max-width="500">
     <v-card
       :subtitle="`${isEditing ? 'Update' : 'Update'} your expense.`"
@@ -107,50 +156,3 @@
     </v-card>
   </v-dialog>
 </template>
-
-<script setup>
-  import { getAllValues } from '../composables/getAll.js';
-  import { onMounted, ref, shallowRef, computed } from 'vue';
-  import { patchAnExpense } from '../composables/postForTable.js';
-  import { DeleteExpense } from '../composables/delete.js'
-
-  const formTableValues = ref({
-  id:'',
-  expenses: '',
-  description: '',
-  type: '',
-})
-
-  const dialog = shallowRef(false)
-  const isEditing = computed(() => !!formTableValues.value.id)
-
-  const expenses=ref([])
-
-    const headers = [
-    { title: 'ID', key: 'id', align: 'start' },
-    { title: 'Amount', key: 'expenses', align: 'start' },
-    { title: 'Description', key: 'description' },
-    { title: 'Type', key: 'type' },
-    { title: 'Actions', key: 'actions', align: 'end', sortable: false },
-  ]
-
-  onMounted(async () => {
-        try{
-    const response  = await getAllValues()
-    expenses.value = response
-    }
-    catch (err){
-        console.error(err)
-  }
-  })
-
-  function edit(id){
-    const item = expenses.value.find(e => e.id ===id )
-    if (item){
-            formTableValues.value = {... item,
-            expenses: Number(item.expenses)
-        }
-        dialog.value=true
-    }
-  }
-</script>

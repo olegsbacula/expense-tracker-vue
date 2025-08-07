@@ -115,7 +115,7 @@ h1{
    width: 400px;
    padding:10px;
    height:fit-content;
-   border:1px solid rgb(200, 200, 200);;
+   border:1px solid rgb(200, 200, 200);
    border-radius: 2%;
 }
 .table{
