@@ -42,15 +42,6 @@ async function OnSubmit(formValues){
     console.error("Failed to post: ", err)
    }
  }
-onMounted( async ()=>{
-  try{
-  const response  = await getAllValues()
-  expenses.value = response
-  }
-  catch (err){
-    console.error(err)
-  }
-})
 
 </script>
 <template>
