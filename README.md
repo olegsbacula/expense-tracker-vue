@@ -12,7 +12,7 @@
 
 ## To run locally
 
-1.Clone:
+1. Clone:
 ```bash
 git clone https://github.com/olegsbacula/expense-tracker-vue.git
 ```
