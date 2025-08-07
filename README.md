@@ -1,4 +1,4 @@
-# expense-tracker-go 
+# expense-tracker
 
 > Just for training purposes. 
 
