@@ -122,7 +122,7 @@ h1{
   position: relative;
   width:800px;
   height:fit-content;
-  border:1px solid black;
+  border:1px solid rgb(200, 200, 200);
   border-radius: 0%;
   margin: 2% 2%;
 }

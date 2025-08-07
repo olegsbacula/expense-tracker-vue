@@ -4,8 +4,8 @@
   import { onMounted, ref, shallowRef, computed } from 'vue';
   import { patchAnExpense } from '../composables/postForTable.js';
   import { DeleteExpense } from '../composables/delete.js'
-
-  const formTableValues = ref({
+  import { DeleteAllExpense } from '../composables/deleteAll.js'
+const formTableValues = ref({
   id:'',
   expenses: '',
   description: '',
@@ -66,7 +66,14 @@
 
             Expenses
           </v-toolbar-title>
-
+          <v-btn
+            class="me-2"
+            prepend-icon="mdi-minus-box"
+            rounded="lg"
+            text="Delete all expenses"
+            border
+            @click="DeleteAllExpense()"
+          ></v-btn>
         </v-toolbar>
       </template>
 
@@ -98,17 +105,6 @@
             @click="DeleteExpense(item.id)"
           ></v-icon>
         </div>
-      </template>
-
-      <template v-slot:no-data>
-        <v-btn
-          prepend-icon="mdi-backup-restore"
-          rounded="lg"
-          text="Reset data"
-          variant="text"
-          
-          @click="reset"
-        ></v-btn>
       </template>
     </v-data-table>
 </div>
