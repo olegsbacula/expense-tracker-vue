@@ -5,7 +5,7 @@ import axios from 'axios'
  *
  * @param {string} expenses    — Expense
  * @param {string} description    — Expense's description 
- * @param {string} expense_type     — Expense type
+ * @param {string} type     — Expense type
  */
 
 export async function postANewExpense(formValues){

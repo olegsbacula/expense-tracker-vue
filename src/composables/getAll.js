@@ -1,11 +1,7 @@
 import axios from 'axios'
 
 /**
- * Create a new task.
- *
- * @param {string} expenses    — Expense
- * @param {string} description    — Expense's description 
- * @param {string} expense_type     — Expense type
+ * Get all expenses
  */
 
 export async function getAllValues(){

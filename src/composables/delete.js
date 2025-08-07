@@ -1,21 +1,18 @@
 import axios from 'axios'
 
 /**
- * Create a new task.
+ * Delete the expense.
  * @param {string} id    — Expense's Identification
  */
 
-export async function postANewExpense(formValues){
-    try{
-        const req = await axios.post ("http://localhost:3000/post",{
-            expenses: formValues.expenses,
-            description: formValues.description,
-            type: formValues.type,
-        })
-        return req.data
-    }
-    catch(err){
-        console.error('Failed to create a new expense:', err)
-        throw err
-    }
+export async function DeleteExpense(id) {
+  try {
+    const response = await axios.delete(
+      `http://localhost:3000/deleteExpense/${id}`
+    );
+    return response.data;
+  } catch (err) {
+    console.error('Failed to delete the expense:', err);
+    throw err;
+  }
 }

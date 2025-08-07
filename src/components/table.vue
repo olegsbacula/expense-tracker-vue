@@ -46,7 +46,7 @@
             color="medium-emphasis"
             icon="mdi-delete"
             size="small"
-            @click="remove(item.id)"
+            @click="DeleteExpense(item.id)"
           ></v-icon>
         </div>
       </template>
@@ -65,48 +65,32 @@
 
   <v-dialog v-model="dialog" max-width="500">
     <v-card
-      :subtitle="`${isEditing ? 'Update' : 'Create'} your favorite book`"
-      :title="`${isEditing ? 'Edit' : 'Add'} a Book`"
+      :subtitle="`${isEditing ? 'Update' : 'Update'} your expense.`"
+      :title="`${isEditing ? 'Edit' : 'Edit'} the expense`"
     >
       <template v-slot:text>
         <v-row>
           <v-col cols="12">
-            <v-text-field
-              v-model="formModel.title"
-              label="Title"
-            ></v-text-field>
+            <v-number-input
+              v-model="formTableValues.expenses"
+              :min="0"
+              label="Expenses"
+            ></v-number-input>
           </v-col>
 
           <v-col cols="12" md="6">
             <v-text-field
-              v-model="formModel.author"
-              label="Author"
+              v-model="formTableValues.description"
+              label="Description"
             ></v-text-field>
           </v-col>
 
           <v-col cols="12" md="6">
             <v-select
-              v-model="formModel.genre"
-              :items="['Fiction', 'Dystopian', 'Non-Fiction', 'Sci-Fi']"
-              label="Genre"
+              v-model="formTableValues.type"
+              :items="['Income', 'Expense']"
+              label="Type"
             ></v-select>
-          </v-col>
-
-          <v-col cols="12" md="6">
-            <v-number-input
-              v-model="formModel.year"
-              :max="currentYear"
-              :min="1"
-              label="Year"
-            ></v-number-input>
-          </v-col>
-
-          <v-col cols="12" md="6">
-            <v-number-input
-              v-model="formModel.pages"
-              :min="1"
-              label="Pages"
-            ></v-number-input>
           </v-col>
         </v-row>
       </template>
@@ -118,7 +102,7 @@
 
         <v-spacer></v-spacer>
 
-        <v-btn text="Save" @click="save"></v-btn>
+        <v-btn text="Save" @click="patchAnExpense(formTableValues)"></v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -126,31 +110,25 @@
 
 <script setup>
   import { getAllValues } from '../composables/getAll.js';
-  import { onMounted, ref, shallowRef, toRef } from 'vue';
-    import { mdiBookMultiple } from '@mdi/js';
-    import { mdiAccount,mdiDomain } from '@mdi/js';
-import { genOverlays } from 'vuetify/lib/composables/variant.mjs';
-  const currentYear = new Date().getFullYear()
-  function createNewRecord () {
-    return {
-      title: '',
-      author: '',
-      genre: '',
-      year: currentYear,
-      pages: 1,
-    }
-  }
+  import { onMounted, ref, shallowRef, computed } from 'vue';
+  import { patchAnExpense } from '../composables/postForTable.js';
+  import { DeleteExpense } from '../composables/delete.js'
 
-  const books = ref([])
-  const formModel = ref(createNewRecord())
+  const formTableValues = ref({
+  id:'',
+  expenses: '',
+  description: '',
+  type: '',
+})
+
   const dialog = shallowRef(false)
-  const isEditing = toRef(() => !!formModel.value.id)
+  const isEditing = computed(() => !!formTableValues.value.id)
 
   const expenses=ref([])
 
     const headers = [
     { title: 'ID', key: 'id', align: 'start' },
-    { title: 'Expense', key: 'expenses', align: 'start' },
+    { title: 'Amount', key: 'expenses', align: 'start' },
     { title: 'Description', key: 'description' },
     { title: 'Type', key: 'type' },
     { title: 'Actions', key: 'actions', align: 'end', sortable: false },
@@ -166,5 +144,13 @@ import { genOverlays } from 'vuetify/lib/composables/variant.mjs';
   }
   })
 
-
+  function edit(id){
+    const item = expenses.value.find(e => e.id ===id )
+    if (item){
+            formTableValues.value = {... item,
+            expenses: Number(item.expenses)
+        }
+        dialog.value=true
+    }
+  }
 </script>

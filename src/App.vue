@@ -11,8 +11,6 @@ const formValues = ref({
 const expenses=ref([])
 
 function validateExpenses(formValues){
-  console.log(formValues.expenses)
-  console.log(typeof formValues.expenses)
   if (parseInt(formValues.expenses) < 0){
     alert("Expenses cannot be lower than 0")
     return false
@@ -56,7 +54,7 @@ onMounted( async ()=>{
 
 </script>
 <template>
-  <h1> 💰 Expenses Tracker</h1>
+  <h1> 💰 Expense Tracker</h1>
   <div class="main">
     <div class="input">
       <FormKit
