@@ -1,10 +1,11 @@
 
 <script setup>
   import { getAllValues } from '../composables/getAll.js';
-  import { onMounted, ref, shallowRef, computed } from 'vue';
+  import { onMounted, ref, shallowRef, computed, watch } from 'vue';
   import { patchAnExpense } from '../composables/postForTable.js';
-  import { DeleteExpense } from '../composables/delete.js'
-  import { DeleteAllExpense } from '../composables/deleteAll.js'
+  import { DeleteExpense } from '../composables/delete.js';
+  import { DeleteAllExpense } from '../composables/deleteAll.js';
+  import Chart from './chart.vue'
 const formTableValues = ref({
   id:'',
   expenses: '',
@@ -14,7 +15,7 @@ const formTableValues = ref({
 
   const dialog = shallowRef(false)
   const isEditing = computed(() => !!formTableValues.value.id)
-
+  const emit = defineEmits(['stats'])  
   const expenses=ref([])
 
     const headers = [
@@ -25,16 +26,33 @@ const formTableValues = ref({
     { title: 'Actions', key: 'actions', align: 'end', sortable: false },
   ]
 
+ const arrayOfSums =ref([])
+  var sum = ref(0)
+  const sumInstance = ref(0)
   onMounted(async () => {
         try{
     const response  = await getAllValues()
     expenses.value = response
+    let total = 0
+    for (const item of response) {
+      if (item.type === 'income'){
+        total += Number(item.expenses)
+        arrayOfSums.value.push(total)
+      }
+      else{
+        total -= Number(item.expenses)
+        arrayOfSums.value.push(total)
+      }
+    }  
+    sumInstance.value =total 
+    sum.value = total
+    
+    emit('stats', { sum: sum.value, arrayOfSums: arrayOfSums.value })
     }
     catch (err){
         console.error(err)
   }
   })
-
   function edit(id){
     const item = expenses.value.find(e => e.id ===id )
     if (item){
@@ -44,6 +62,7 @@ const formTableValues = ref({
         dialog.value=true
     }
   }
+  
 </script>
 
 <template>
@@ -108,6 +127,9 @@ const formTableValues = ref({
       </template>
     </v-data-table>
 </div>
+<div class="card">
+  
+</div>
   <v-dialog v-model="dialog" max-width="500">
     <v-card
       :subtitle="`${isEditing ? 'Update' : 'Update'} your expense.`"
@@ -151,4 +173,20 @@ const formTableValues = ref({
       </v-card-actions>
     </v-card>
   </v-dialog>
+  <div class="chart">
+  <Chart :expenses="expenses" :sum="sum"  :array-of-sums="arrayOfSums"/> 
+  </div>
 </template>
+
+<style scoped>
+.table{
+  position: relative;
+  width:800px;
+  height:fit-content;
+  border:1px solid rgb(200, 200, 200);
+  border-radius: 0%;
+  margin: 2% 2%;
+}
+
+
+</style>

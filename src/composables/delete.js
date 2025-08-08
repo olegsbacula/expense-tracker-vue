@@ -10,6 +10,7 @@ export async function DeleteExpense(id) {
     const response = await axios.delete(
       `http://localhost:3000/deleteExpense/${id}`
     );
+    window.location.reload()
     return response.data;
   } catch (err) {
     console.error('Failed to delete the expense:', err);

@@ -2,6 +2,8 @@
 import {onMounted, ref} from 'vue';
 import { postANewExpense } from './composables/SendInsret.js';
 import { getAllValues } from './composables/getAll.js';
+import Card from './components/card.vue';
+import Chart from './components/chart.vue';
 import Table from './components/table.vue'
 const formValues = ref({
   expenses: '',
@@ -9,7 +11,12 @@ const formValues = ref({
   type: '',
 })
 const expenses=ref([])
-
+const total = ref(0)
+const array=ref([])
+function onStats({ sum, arrayOfSums }) {
+  total.value = sum
+  array.value = arrayOfSums
+}
 function validateExpenses(formValues){
   if (parseInt(formValues.expenses) < 0){
     alert("Expenses cannot be lower than 0")
@@ -47,6 +54,7 @@ async function OnSubmit(formValues){
 <template>
   <h1> 💰 Expense Tracker</h1>
   <div class="main">
+    <div class="left">
     <div class="input">
       <FormKit
         type="form"
@@ -87,11 +95,14 @@ async function OnSubmit(formValues){
         />
         <FormKit type="button" @click="OnSubmit(formValues)" :style="gray">Submit expense</FormKit>
       </FormKit>
+     </div>
+     <div class="card">
+        <Card :sum="total" :array-of-sums="array"  />
+      </div>
     </div>
-
     <div class="table">
-      <Table />
-    </div>
+      <Table @stats="onStats" />
+    </div>    
   </div>
 </template>
 
@@ -109,6 +120,15 @@ h1{
   margin-left:2%;
 }
 
+.table{
+  display:flex;           
+  flex-direction:column;
+  gap:12px;
+  width:400px;  
+  margin-left:10px;
+  margin-top:1%;
+}
+
 .input{
   margin:2% 2%;
   background-color: white;
@@ -118,12 +138,18 @@ h1{
    border:1px solid rgb(200, 200, 200);
    border-radius: 2%;
 }
-.table{
-  position: relative;
-  width:800px;
-  height:fit-content;
-  border:1px solid rgb(200, 200, 200);
-  border-radius: 0%;
-  margin: 2% 2%;
+.left{
+  display:flex;           
+  flex-direction:column;
+  gap:12px;
+  width:400px;            
+}
+
+.card{
+  margin:2% 2%;
+}
+
+.chart{
+  gap:10px;
 }
 </style>
