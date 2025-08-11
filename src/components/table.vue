@@ -188,5 +188,8 @@ const formTableValues = ref({
   margin: 2% 2%;
 }
 
+.chart{
+  margin:0.5% 2%;
+}
 
 </style>

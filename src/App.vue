@@ -125,7 +125,7 @@ h1{
   flex-direction:column;
   gap:12px;
   width:400px;  
-  margin-left:10px;
+  margin-left:20px;
   margin-top:1%;
 }
 
