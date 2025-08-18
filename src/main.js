@@ -1,5 +1,6 @@
 import { createApp } from 'vue'
 import App from './App.vue'
+import { createPinia } from 'pinia'
 import './style.css'
 
 import { plugin as formkitPlugin, defaultConfig as formkitConfig } from '@formkit/vue'
@@ -10,7 +11,7 @@ import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
-
+const pinia = createPinia()
 const vuetify = createVuetify({
   components,
   directives,
@@ -26,5 +27,5 @@ app.use(vuetify)
 
 
 app.use(formkitPlugin, formkitConfig)
-
+app.use(pinia)
 app.mount('#app')

@@ -1,7 +1,8 @@
 
 <script setup>
   import { getAllValues } from '../composables/getAll.js';
-  import { onMounted, ref, shallowRef, computed, watch } from 'vue';
+  import { onMounted, ref, shallowRef, computed } from 'vue';
+  import { useMainStore } from '../store/mainStore.js';
   import { patchAnExpense } from '../composables/postForTable.js';
   import { DeleteExpense } from '../composables/delete.js';
   import { DeleteAllExpense } from '../composables/deleteAll.js';
@@ -16,7 +17,7 @@ const formTableValues = ref({
   const dialog = shallowRef(false)
   const isEditing = computed(() => !!formTableValues.value.id)
   const emit = defineEmits(['stats'])  
-  const expenses=ref([])
+  const expensesArr=ref([])
 
     const headers = [
     { title: 'ID', key: 'id', align: 'start' },
@@ -29,12 +30,17 @@ const formTableValues = ref({
  const arrayOfSums =ref([])
   var sum = ref(0)
   const sumInstance = ref(0)
+  const mainStoreInfo = useMainStore();
   onMounted(async () => {
         try{
     const response  = await getAllValues()
-    expenses.value = response
+    expensesArr.value = response
     let total = 0
-    for (const item of response) {
+      for (const item of response) {
+          mainStoreInfo.initialValues.ID.push(item.id)
+          mainStoreInfo.initialValues.Expenses.push(Number(item.expenses))
+          mainStoreInfo.initialValues.Description.push(item.description)
+          mainStoreInfo.initialValues.Type.push(item.type)      
       if (item.type === 'income'){
         total += Number(item.expenses)
         arrayOfSums.value.push(total)
@@ -52,24 +58,42 @@ const formTableValues = ref({
     catch (err){
         console.error(err)
   }
+    console.log(mainStoreInfo.initialValues)
+
   })
   function edit(id){
-    const item = expenses.value.find(e => e.id ===id )
-    if (item){
-            formTableValues.value = {... item,
-            expenses: Number(item.expenses)
+    const findItem = expensesArr.value.find(e => e.id ===id )
+    if (findItem){
+            formTableValues.value = {... findItem,
+            expenses: Number(findItem.expenses)
         }
         dialog.value=true
     }
   }
-  
+  async function save() {
+  try {
+    await patchAnExpense(formTableValues.value)
+    const idx = expensesArr.value.findIndex(e => e.id === formTableValues.value.id)
+    if (idx !== -1) {
+      expensesArr.value[idx] = {
+        ...expensesArr.value[idx],
+        description: formTableValues.value.description,
+        expenses: Number(formTableValues.value.expenses),
+        type: formTableValues.value.type,
+      }
+    }
+    dialog.value = false
+  } catch (e) {
+   console.error("Error: ", e)
+  }
+}
 </script>
 
 <template>
     <div class="table">
     <v-data-table
       hide-default-footer
-      :items="expenses"
+      :items="expensesArr"
       color="black"
       :headers="headers"
     >
@@ -169,12 +193,12 @@ const formTableValues = ref({
 
         <v-spacer></v-spacer>
 
-        <v-btn text="Save" @click="patchAnExpense(formTableValues)"></v-btn>
+        <v-btn text="Save" @click="save()"></v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
   <div class="chart">
-  <Chart :expenses="expenses" :sum="sum"  :array-of-sums="arrayOfSums"/> 
+  <Chart :expensesArr="expensesArr" :sum="sum"  :array-of-sums="arrayOfSums"/> 
   </div>
 </template>
 

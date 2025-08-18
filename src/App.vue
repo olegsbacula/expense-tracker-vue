@@ -1,9 +1,8 @@
 <script setup>
-import {onMounted, ref} from 'vue';
+import { ref } from 'vue';
+import { useMainStore } from './store/mainStore.js';
 import { postANewExpense } from './composables/SendInsret.js';
-import { getAllValues } from './composables/getAll.js';
 import Card from './components/card.vue';
-import Chart from './components/chart.vue';
 import Table from './components/table.vue'
 const formValues = ref({
   expenses: '',
@@ -25,6 +24,8 @@ function validateExpenses(formValues){
   return true
 }
 
+const mainStore= useMainStore();
+
 const gray = {
   backgroundColor: 'rgb(224, 224, 224)',
   color: 'black',
@@ -43,7 +44,6 @@ async function OnSubmit(formValues){
         return 
       }
       const newRecord = await postANewExpense(formValues)
-      window.location.reload()
    }
    catch(err){
     console.error("Failed to post: ", err)

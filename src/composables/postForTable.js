@@ -18,7 +18,6 @@ export async function patchAnExpense(formTableValues){
             description: formTableValues.description,
             type: formTableValues.type,
         })
-        window.location.reload()
         return req.data
     }
     catch(err){
